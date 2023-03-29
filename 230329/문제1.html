@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 문제1) 사각형 면적 구하기 
+        사각형의 가로 세로를 입력받아 면적을 구하여 출력하세요-->
+    <h2>사각형 면적 구하기</h2>
+
+    <input
+      type="text"
+      name="width"
+      id="width"
+      placeholder="사각형 가로길이 입력"
+    />
+    <br />
+    <input
+      type="text"
+      name="height"
+      id="height"
+      placeholder="사각형 세로길이 입력"
+    /><br /><br />
+    <button onclick="rect(1)">둘레구하기</button>
+    <button onclick="rect(2)">면적구하기</button>
+    <span id="result"></span>
+
+    <script>
+      function rect(oper) {
+        width = document.getElementById('width').value;
+        height = document.getElementById('height').value;
+
+        if (oper == '1') result = parseInt(width) * 2 + parseInt(height) * 2;
+        else if (oper == '2') result = parseInt(width) * parseInt(height);
+
+        document.getElementById('result').innerHTML = result;
+      }
+    </script>
+  </body>
+</html>

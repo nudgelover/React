@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" name="number" value="10" /><br />
+    <input type="text" name="number" value="20" /><br />
+    <input type="text" name="number" value="30" /><br />
+    <input type="text" name="number" value="40" /><br />
+    <input type="text" name="number" value="50" /><br />
+
+    <input type="text" name="result" value="" /><br />
+
+    <script>
+      var numbers = document.getElementsByName('number');
+      var results = document.getElementsByName('result');
+
+      sum = 0;
+      numbers.forEach((n) => {
+        sum += parseInt(n.value);
+      });
+      results[0].value = sum;
+      //값이 하나 밖에 없어도 배열을 꼭 써줘야함!
+    </script>
+  </body>
+</html>

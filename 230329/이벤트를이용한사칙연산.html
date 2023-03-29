@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    x: <input type="text" name="xvalue" id="xvalue" /><br />
+    y :<input type="text" name="yvalue" id="yvalue" /><br />
+    <button onclick="add()">더하기</button>&nbsp;&nbsp;
+    <button onclick="minus()">빼기</button>&nbsp;&nbsp;
+    <button onclick="division()">나누기</button>&nbsp;&nbsp;
+    <button onclick="multiple()">곱하기</button>&nbsp;&nbsp;
+    <span id="result"></span>
+    <script>
+      function add() {
+        x = document.getElementById('xvalue').value;
+        y = document.getElementById('yvalue').value;
+
+        document.getElementById('result').innerHTML = parseInt(x) + parseInt(y);
+      }
+      function minus() {
+        x = document.getElementById('xvalue').value;
+        y = document.getElementById('yvalue').value;
+
+        document.getElementById('result').innerHTML = parseInt(x) - parseInt(y);
+      }
+      function division() {
+        x = document.getElementById('xvalue').value;
+        y = document.getElementById('yvalue').value;
+
+        document.getElementById('result').innerHTML = parseInt(x) / parseInt(y);
+      }
+      function multiple() {
+        x = document.getElementById('xvalue').value;
+        y = document.getElementById('yvalue').value;
+
+        document.getElementById('result').innerHTML = parseInt(x) * parseInt(y);
+      }
+    </script>
+  </body>
+</html>
