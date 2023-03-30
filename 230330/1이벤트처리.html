@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button style="background-color: moccasin" onclick="changebackground(this)">
+      배경색
+    </button>
+    <button style="background-color: yellow" onclick="changebackground(this)">
+      배경색
+    </button>
+    <button style="background-color: pink" onclick="changebackground(this)">
+      배경색
+    </button>
+    <button style="background-color: magenta" onclick="changebackground(this)">
+      배경색
+    </button>
+    <button style="background-color: maroon" onclick="changebackground(this)">
+      배경색
+    </button>
+    <button style="background-color: coral" onclick="changebackground(this)">
+      배경색
+    </button>
+
+    <script>
+      function changebackground(btncol) {
+        console.log(event);
+        console.log(event.target);
+        //event 자바 스크립트가 제공하는 내장객체, 발생한 이벤트에 대한 모든 정보를 가지고 잇다.
+        document.getElementsByTagName('body')[0].style.backgroundColor =
+          btncol.style.backgroundColor;
+      }
+      //tagname 이기에 body가 1개밖에 없어도 배열로 와야함...!
+      //this함수 react때 써먹어야함.
+    </script>
+  </body>
+</html>
