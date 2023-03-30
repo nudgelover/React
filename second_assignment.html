@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>성적 계산기</h1>
+    <span
+      >이름과 각 성적을 입력하시면, 총점과 평균점수를 알려드립니다.<br />
+      모든 항목은 필수기재사항이오니, 누락없이 입력바랍니다.</span
+    >
+    <br />
+    <br />
+    <table id="score" width="30%">
+      <colgroup>
+        <col width="30%" />
+        <col width="70%" />
+      </colgroup>
+      <tr>
+        <td>이름</td>
+        <td><input type="text" id="name" /></td>
+      </tr>
+      <tr>
+        <td>국어</td>
+        <td><input type="text" id="kor" numberOnly /></td>
+      </tr>
+      <tr>
+        <td>영어</td>
+        <td><input type="text" id="eng" numberOnly /></td>
+      </tr>
+      <tr>
+        <td>수학</td>
+        <td><input type="text" id="math" numberOnly /></td>
+      </tr>
+    </table>
+    <br />
+
+    <input type="button" value="결과확인" id="btn" />
+    <div>
+      <p id="result"></p>
+    </div>
+
+    <script type="text/javascript">
+      //정규식(숫자만입력되게)
+      $(document).ready(function () {
+        $('input:text[numberOnly]').on('keyup', function () {
+          $(this).val(
+            $(this)
+              .val()
+              .replace(/[^0-9]/g, '')
+          );
+        });
+      });
+    </script>
+
+    <script>
+      $(document).ready(() => {
+        $('#btn').click(() => {
+          name = $('#name').val();
+          kor = parseInt($('#kor').val());
+          eng = parseInt($('#eng').val());
+          math = parseInt($('#math').val());
+          sum = kor + eng + math;
+          avg = sum / 3;
+
+          if (!name) {
+            alert('이름은 필수기재사항 입니다.');
+            $('#name').css('border-color', 'red');
+            return;
+          }
+
+          if (kor > 100 || kor < 0 || !kor) {
+            $('#kor').css('border-color', 'red');
+            alert(
+              '국어 점수 오류입니다. 점수는 0~100점 사이로 입력해주세요!(필수입력)'
+            );
+            return;
+          }
+          if (eng > 100 || eng < 0 || !eng) {
+            $('#eng').css('border-color', 'red');
+            alert(
+              '영어 점수 오류입니다. 점수는 0~100점 사이로 입력해주세요!(필수입력)'
+            );
+            return;
+          }
+          if (math > 100 || math < 0 || !math) {
+            $('#math').css('border-color', 'red');
+            alert(
+              '수학 점수 오류입니다. 점수는 0~100점 사이로 입력해주세요!(필수입력)'
+            );
+            return;
+          }
+          $('#result').html(
+            name +
+              '학생의 총점은 ' +
+              sum +
+              '점이며, 평균은 ' +
+              avg +
+              '점 입니다.'
+          );
+        });
+      });
+    </script>
+  </body>
+</html>
