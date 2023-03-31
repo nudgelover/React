@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <button class="btn" style="background-color: moccasin">배경색</button>
+    <button class="btn" style="background-color: yellow">배경색</button>
+    <button class="btn" style="background-color: pink">배경색</button>
+    <button class="btn" style="background-color: magenta">배경색</button>
+    <button class="btn" style="background-color: maroon">배경색</button>
+    <button class="btn" style="background-color: coral">배경색</button>
+
+    <script>
+      $(document).ready(() => {
+        // $('.btn').click(() => {
+        //   $('body').css('background-color', $('this').css('background-color'));
+        // });
+
+        var button = $('.btn');
+        button.click(function () {
+          $('body').css('background-color'), $(this).css('background-color');
+        });
+      });
+
+      //작동안됨.... 방법알아보까 이거 자바스크리트로는 했떤부분이니 다시 한번 알알보자..
+    </script>
+  </body>
+</html>

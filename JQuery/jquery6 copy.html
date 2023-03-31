@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <form action="">
+      <input type="hidden" name="seq" id="seq" /><br />
+      이름: <input type="text" name="username" /><br />
+      좋아하는 거<br />
+      <input type="checkbox" name="interrest" value="1" />자바<br />
+      <input type="checkbox" name="interrest" value="2" />C<br />
+      <input type="checkbox" name="interrest" value="3" />파이썬<br />
+      <input type="checkbox" name="interrest" value="4" />빅데이터<br />
+      <input type="checkbox" name="interrest" value="5" />웹프로그래밍<br />
+      <!-- check는 id가 아니라 꼭 name속성으로 해주어야함 -->
+
+      <button type="button" id="btnSelectAll">전체선택</button>
+      <button type="button" id="btnReleaseAll">전체해제</button>
+      <button type="button" id="btnRead">데이터 읽기</button>
+    </form>
+
+    <script>
+      $(document).ready(() => {
+        $('input[type = hidden][name=seq]').val('777');
+        $('input[type = text][name=username]').val('홍길동');
+
+        $('#seq').val(9999); //얜 바뀌고
+        $('#username').val('임꺽정'); // 얜 안바뀌네
+        $('input[type = checkbox][name=interrest]').eq(0).prop('checked', true);
+        $('input[type = checkbox][name=interrest]').eq(2).prop('checked', true);
+        //이렇게 하면 화면에 미리 체크되어있음
+
+        $('#btnRead').click(() => {
+          console.log($('input[type = hidden][name=seq]').val());
+          console.log($('input[type = text][name=username]').val());
+
+          //선택한 항목 가져올 때는
+          let result = '';
+          $('input[type = checkbox][name=interrest]:checked').each(function () {
+            //각자 개체가 전달된다.
+            result += $(this).val() + ',';
+            //선택안된 체크 박스는 값이 비어있음
+            //this가 들어갈 땐 화살표함수 못쓴다
+          });
+          alert(result);
+        });
+
+        $('#btnSelectAll').click(() => {
+          $('input[type = checkbox][name=interrest]').prop('checked', true);
+        });
+        $('#btnReleaseAll').click(() => {
+          $('input[type = checkbox][name=interrest]').prop('checked', false);
+        });
+      });
+    </script>
+  </body>
+</html>
