@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>성적 계산기</h1>
+    <span
+      >이름과 각 성적을 입력하시면, 총점과 평균점수를 알려드립니다.<br />
+      모든 항목은 필수기재사항이오니, 누락없이 입력바랍니다.</span
+    >
+    <br />
+    <br />
+    <table id="score" width="30%">
+      <colgroup>
+        <col width="30%" />
+        <col width="70%" />
+      </colgroup>
+      <tr>
+        <td>이름</td>
+        <td><input type="text" id="name" /></td>
+      </tr>
+      <tr>
+        <td>국어</td>
+        <td><input type="number" id="kor" /></td>
+      </tr>
+      <tr>
+        <td>영어</td>
+        <td><input type="number" id="eng" /></td>
+      </tr>
+      <tr>
+        <td>수학</td>
+        <td><input type="number" id="math" /></td>
+      </tr>
+    </table>
+    <br />
+
+    <input type="button" value="결과확인" id="btn" />
+    <div>
+      <p id="result"></p>
+    </div>
+
+    <script>
+      const btn = document.getElementById('btn');
+      btn.addEventListener('click', () => {
+        const name = document.getElementById('name').value;
+        const kor = parseInt(document.getElementById('kor').value);
+        const eng = parseInt(document.getElementById('eng').value);
+        const math = parseInt(document.getElementById('math').value);
+        const sum = kor + eng + math;
+        const avg = sum / 3;
+        const result = `${name}학생의 총점은 ${sum}이고 평균은 ${avg}입니다.`;
+
+        if (!name) {
+          alert('이름은 필수기재사항입니다.');
+          document.querySelector('#name').style.borderColor = 'red';
+          return;
+        }
+
+        if (kor > 100 || kor < 0 || !kor) {
+          alert(
+            '국어 점수 오류입니다. 점수는 0~100점 사이로 입력해주세요!(필수입력)'
+          );
+          document.querySelector('#kor').style.borderColor = 'red';
+          return;
+        }
+
+        if (eng > 100 || eng < 0 || !eng) {
+          alert(
+            '영어 점수 오류입니다. 점수는 0~100점 사이로 입력해주세요!(필수입력)'
+          );
+          document.querySelector('#eng').style.borderColor = 'red';
+          return;
+        }
+
+        if (math > 100 || math < 0 || !math) {
+          alert(
+            '수학 점수 오류입니다. 점수는 0~100점 사이로 입력해주세요!(필수입력)'
+          );
+          document.querySelector('#math').style.borderColor = 'red';
+          return;
+        }
+
+        document.getElementById('result').innerHTML = result;
+      });
+    </script>
+  </body>
+</html>
