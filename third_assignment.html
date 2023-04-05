@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form name="scoreform" action="/score" method="get">
+      이름 : <input type="text" name="name" /><br />
+      국어 : <input type="number" name="kor" id="kor" /><br />
+      영어 : <input type="number" name="eng" eng="eng" /><br />
+      수학 : <input type="number" name="mat" mat="mat" /><br />
+
+      <button type="button" id="btnResult">결과확인</button>
+    </form>
+  </body>
+</html>
+<script>
+  window.onload = () => {
+    let btnResult = document.getElementById('btnResult');
+    // let kor = document.getElementById('kor').innerText;
+    // let eng = document.getElementById('eng').innerText;
+    // let mat = document.getElementById('mat').innerText;
+
+    btnResult.addEventListener('click', () => {
+      // if (kor > 100 || kor < 0 || !kor) {
+      //   alert('국어점수가 잘못입력되었습니다');
+      //   return;
+      // }
+      document.scoreform.submit();
+    });
+  };
+</script>

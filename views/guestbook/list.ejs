@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Board</title>
+  </head>
+  <body>
+    <!-- name, id 둘다 가능하다 -->
+    <form name="myform" id="myform">
+      <h3><%=title%></h3>
+
+      <table>
+        <%for(guestbook of guestbookList){%>
+        <tr>
+          <td><%=guestbook.id%></td>
+          <td>
+            <a href="/view/<%=guestbook.id%>"><%=guestbook.title%></a>
+          </td>
+          <td><%=guestbook.writer%></td>
+          <td><%=guestbook.wdate%></td>
+        </tr>
+        <%}%>
+      </table>
+
+      <br /><br />
+
+      <button type="button" id="writeBtn">글쓰기</button>
+    </form>
+  </body>
+</html>
+
+<script>
+  let writeBtn = document.getElementById('writeBtn');
+  writeBtn.addEventListener('click', () => {
+    var frm = document.myform;
+    //var frm = document.getElementById("myform"); //id 속성일때
+
+    frm.action = '/write';
+    frm.method = 'get';
+    frm.submit(); //서버로 정보를 전송한다
+  });
+</script>
