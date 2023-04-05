@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <!-- http://127.0.0.1:3000/ajax/score -->
+    <!-- http://127.0.0.1:3000/ajax/cal?sname=%EA%B9%80%EC%A7%84%ED%9D%AC&kor=80&eng=80&mat=80 -->
+    <form>
+      이름 : <input type="text" id="sname" /><br />
+      국어 : <input type="number" id="kor" /><br />
+      영어 : <input type="number" id="eng" /><br />
+      수학 : <input type="number" id="mat" /><br />
+      총점 : <input type="text" id="result" /><br />
+      평균 : <input type="text" id="result2" /><br />
+
+      <button type="button" id="btnResult">결과확인</button>
+      <!-- name은 안줘도 될거같은데? -->
+    </form>
+
+    <script>
+      $(document).ready(() => {
+        $('#btnResult').click(() => {
+          //비동기모드 - 반환값 x
+          $.ajax({
+            //이 형태는 매뉴얼에 정해진 형태라 딱 지켜야함.
+
+            url: '/score/cal',
+            data: {
+              sname: $('#sname').val(),
+              kor: $('#kor').val(),
+              eng: $('#eng').val(),
+              mat: $('#mat').val(),
+            },
+            dataType: 'json', // 결과를 제이슨 형태로 가져오겠다
+          })
+            .done((res, status, erro) => {
+              $('#result').val(res.sum);
+              $('#result2').val(res.avg);
+            })
+            .fail((res, status, erro) => {
+              console.log(status);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
