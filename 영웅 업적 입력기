@@ -1,0 +1,322 @@
+영웅 업적 입력기
+
+### **DB 생성**
+
+```jsx
+CREATE TABLE tb_hero
+(
+	 id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	 hero_name VARCHAR(40),
+	 hero_desc VARCHAR(100),
+	 wdate datetime
+	 
+)
+
+INSERT INTO tb_hero(hero_name, hero_desc,wdate)
+VALUES('아이언맨','타노스 장갑 뺏음',NOW())
+INSERT INTO tb_hero(hero_name, hero_desc,wdate)
+VALUES('캡틴아메리카','아캔두디스올데이',NOW())
+INSERT INTO tb_hero(hero_name, hero_desc,wdate)
+VALUES('블랙위도우','안돼 죽지마',NOW())
+INSERT INTO tb_hero(hero_name, hero_desc,wdate)
+VALUES('완다','흑화되지마ㅠㅠ',NOW())
+
+SELECT * FROM tb_hero
+SELECT a.id, a.hero_name, a.hero_desc, DATE_FORMAT(A.wdate, '%Y-%m-%d') wdate FROM tb_hero a
+```
+
+### React(FRONT)
+
+`$ npm install axios` - react 파일에
+
+[[React] axios란? (feat. Fetch API)](https://velog.io/@shin6403/React-axios란-feat.-Fetch-API)
+
+리액트파일에 HeroList.js 만들고 App.js에 import하고,
+
+```jsx
+//백엔드서버로 부터 데이터 가져온다
+//axios 설치 필요 npm install axios
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+function HeroList() {
+  const [heroList, setHeroList] = useState([]);
+	const [loading, setLoading] = useState(false); //데이터를 수신하면 true로 바뀐다.
+  //useState함수가 값을 초기화를 해주면 해당 값을 저장할 변수와 해당값을 변경하는 함수를 반환함, [] -> 배열을 저장할 변수반환, 배열값을 변환할 함수주소
+
+  //첫번째 매개변수 - mount 될때, update 될때, unmount 될때 호출된다
+  //[]- 변수: 변수들이 바뀔 때 호출된다
+  useEffect(() => {
+    //서버에서 데이터를 불러온다.
+    axios
+      .get('http://localhost:9090/hero/list')
+      .then((res) => {
+        setHeroList(res.data);
+				setLoading(true);
+      })
+      .catch((res, status, error) => {
+        console.log(status);
+      });
+  }, []);
+
+  return (
+    <>
+      <table>
+        {heroList.map((item, index) => {
+          return (
+            <tr>
+              <td>{item.id}</td>
+              <td>{item.hero_name}</td>
+              <td>{item.hero_desc}</td>
+            </tr>
+          );
+        })}
+      </table>
+    </>
+  );
+}
+
+export default HeroList;
+```
+
+### Node.js (BACKEND)
+
+`$ npm install cors`
+
+우선 포트 번호부터 바꿔주자 (3000같이 쓰면 오류남)
+
+**package.json**
+
+```jsx
+"scripts": {
+    "start": "set port=9090 && node ./bin/www"
+  },
+```
+
+**app.js 파일에 CORS 추가**
+
+```jsx
+const cors = require('cors')
+app.use(cors());
+```
+
+**CORS(Cross-Origin Resource Sharing)**
+
+CORS란 자신이 속하지 않은 다른 도메인, 다른 프로토콜, 혹은 다른 포트에 있는 리소스를 요청하는 cross-origin HTTP 요청 방식
+
+근데 이 방법 말고 보다 정밀하게 받는 방법 찾아서 작성해야 함
+
+이 방법은 아무데서나 요청오면 다받음..
+
+**hero.js 파일 만들기**
+
+```jsx
+var express = require('express');
+var router = express.Router();
+let commonDB = require('./commonDB');
+/* GET home page. */
+router.get('/list', async function (req, res, next) {
+  let sql = `SELECT a.id, a.hero_name, a.hero_desc, DATE_FORMAT(A.wdate, '%Y-%m-%d') wdate FROM tb_hero a
+  `;
+  let results = await commonDB.mysqlRead(sql, []);
+  res.json(results);
+});
+
+router.post('/save', async function (req, res, next) {
+  try {
+    let hero_name = req.body.hero_name;
+    let hero_desc = req.body.hero_desc;
+    let sql = `INSERT INTO tb_hero(hero_name, hero_desc,wdate)
+               VALUES(?,?,NOW())
+                `;
+    await commonDB.mysqlRead(sql, [hero_name, hero_desc]);
+    res.json({result: 'success'});
+  } catch (e) {
+    console.log(e);
+    res.json({result: 'fail'});
+  }
+});
+module.exports = router;
+```
+
+**포스트맨으로 값 잘 넘어오는 지 확인하는 방법**
+
+![화면 캡처 2023-04-12 161721.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8f03a6bd-48ec-4b66-bfcb-69358bc6e183/%ED%99%94%EB%A9%B4_%EC%BA%A1%EC%B2%98_2023-04-12_161721.png)
+
+⇒ 이렇게 success 뜨면, 데이터가 insert 되는 것을 DB와 페이지에서 확인 할 수 있음.
+
+## **자, 이제 입력 삭제 기능을 넣자!**
+
+**Node.js 의 Hero.js 파일 수정**
+
+```jsx
+var express = require('express');
+var router = express.Router();
+let commonDB = require('./commonDB');
+/* GET home page. */
+router.get('/list', async function (req, res, next) {
+  let sql = `SELECT a.id, a.hero_name, a.hero_desc, DATE_FORMAT(A.wdate, '%Y-%m-%d') wdate FROM tb_hero a
+  `;
+  let results = await commonDB.mysqlRead(sql, []);
+  res.json(results);
+});
+
+router.post('/save', async function (req, res, next) {
+  try {
+    let hero_name = req.body.hero_name;
+    let hero_desc = req.body.hero_desc;
+    let sql = `INSERT INTO tb_hero(hero_name, hero_desc,wdate)
+               VALUES(?,?,NOW())
+                `;
+    await commonDB.mysqlRead(sql, [hero_name, hero_desc]);
+    res.json({result: 'success'});
+  } catch (e) {
+    console.log(e);
+    res.json({result: 'fail'});
+  }
+});
+
+router.use('/delete', async function (req, res, next) {
+  try {
+    let id = req.body.id;
+    let sql = `DELETE FROM tb_hero WHERE id=${id}`;
+    await commonDB.mysqlRead(sql, []);
+    res.json({result: 'success'});
+  } catch (e) {
+    console.log(e);
+    res.json({result: 'fail'});
+  }
+});
+module.exports = router;
+```
+
+**React에** 
+
+**HeroWrite.js 추가**
+
+```jsx
+import React, {useState} from 'react';
+import axios from 'axios';
+function HeroWrite() {
+  const [hero_name, setHeroName] = useState('');
+  //useState함수가 문자열 변수랑 변수값 바꾸는 함수를 만들어서 배열형태로 전달한다.
+  const [hero_desc, setHeroDesc] = useState('');
+
+  //input 태그에 값이 바뀌면 이 함수가 호출
+  const heroNameChange = (e) => {
+    setHeroName(e.target.value);
+  };
+
+  //input 태그에 값이 바뀌면 이 함수가 호출
+  const heroDescChange = (e) => {
+    setHeroDesc(e.target.value);
+  };
+
+  //form 태그를 써서 서버로 전송할 때 <button> 태그에 type="button" 속석이 없으면, 버튼을 누를때 submit()함수가 호출된다.
+  //submit 함수가 호출되면 form 태그의 onsubmit 이벤트핸들러가 호출된다ㅏ. 이때 잡아채서 서버에 전송하는 처리를 한다.
+  //onsubmit 함수의 경우 무조건 서버로 전송을 한다. 이걸 막기 위해서 preventdefault() 함수를 호출한다.
+  const onSubmit = (e) => {
+    e.preventDefault(); //from태그를 통해 서버에 정보 전송 전에 호출된다.
+    //버튼의 기본 기능을 정지시킨다. submit 버튼의 submit 기능을 막고, 별도의 처리를 한다.
+    //Spring은 데이터를 문자열로 와야 받는다.
+    //Axios는 JSON으로 데이터를 주고 받는다.
+    axios
+      .post('http://localhost:9090/hero/save', {
+        hero_name: hero_name,
+        hero_desc: hero_desc,
+      })
+      .then((res) => {
+        console.log(res.data.result);
+        window.location.reload();
+        //화면 다시 불러오기 가급적 사용하지말자...
+        //location 객체는 원래 존재하는데 부모가 윈도우
+        //react 아니면 location.reload();만 호출해도 되는데,
+        //react는  window.location.reload();로 호출해라
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <h3>영웅 입력하기</h3>
+        이름 : <input type='text' onChange={heroNameChange}></input>
+        <br />
+        업적: <input type='text' onChange={heroDescChange}></input>
+        <br />
+        <button>추가</button>
+      </form>
+    </div>
+  );
+}
+export default HeroWrite;
+```
+
+**HeroList.js 수정(삭제기능 추가)**
+
+```jsx
+//백엔드서버로 부터 데이터 가져온다
+//axios 설치 필요 npm install axios
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+function HeroList() {
+  const [heroList, setHeroList] = useState([]);
+  //useState함수가 값을 초기화를 해주면 해당 값을 저장할 변수와 해당값을 변경하는 함수를 반환함, [] -> 배열을 저장할 변수반환, 배열값을 변환할 함수주소
+  //첫번째 매개변수 - mount 될때, update 될때, unmount 될때 호출된다
+  //[]- 변수: 변수들이 바뀔 때 호출된다
+  const [loading, setLoading] = useState(false); //데이터를 수신하면 true로 바뀐다.
+
+  useEffect(() => {
+    //서버에서 데이터를 불러온다.
+    axios
+      .get('http://localhost:9090/hero/list')
+      .then((res) => {
+        setHeroList(res.data);
+        setLoading(true);
+      })
+      .catch((res, status, error) => {
+        console.log(status);
+      });
+  }, []);
+
+  const onDelete = (e, index) => {
+    e.preventDefault();
+    axios
+      .post('http://localhost:9090/hero/delete', {
+        id: heroList[index].id,
+      })
+      .then((res) => {
+        console.log(res);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
+    <>
+      <table>
+        {loading === true
+          ? heroList.map((item, index) => {
+              return (
+                <tr key={item.id}>
+                  {/* <td>{item.id}</td> */}
+                  <td>{index + 1}</td>                   {/* index따로주기 */}
+                  <td>{item.hero_name}</td>
+                  <td>{item.hero_desc}</td>
+                  <td>
+                    <button onClick={(e) => onDelete(e, index)}>delete</button>
+                  </td>
+                </tr>
+              );
+            })
+          : ''}
+      </table>
+    </>
+  );
+}
+
+export default HeroList;
+```
+
