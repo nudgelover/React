@@ -1,0 +1,206 @@
+React 파일
+
+import React, {useState, useEffect} from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'; //부트스트랩 라이브러리
+import {Link, useNavigate, useParams} from 'react-router-dom';
+import axios from 'axios';
+import {SERVERIP} from '../../CommonUtil';
+
+function BoardListPage() {
+  const [boardList, setBoardList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sessionName, setSessionName] = useState('회원');
+  const navigate = useNavigate();
+  //세션스토리지에 로그인 시 값이 저장됨. 그 json에서 username 추출해서 인사말을 띄우고 싶음. 또 이 세션이 있을 때만 글쓰기 가능!
+  const user = sessionStorage.getItem('user');
+  const loginUserName = JSON.parse(user).username;
+
+  console.log(loginUserName);
+  function onClickWrite() {
+    if (user) {
+      navigate('/board/write');
+      return;
+    }
+    alert('로그인 후 이용해주세요.');
+  }
+
+  //페이징!!!!-------------------------------
+  //한페이지당 보여줄 개수
+  const itemsPerPage = 5;
+
+  const {page} = useParams();
+  const [currentPage, setCurrentPage] = useState(page);
+
+  useEffect(() => {
+    const regex = /\/board\/list\/(\d+)/;
+    const match = window.location.pathname.match(regex);
+    if (match) {
+      setCurrentPage(match[1]);
+    }
+  }, []);
+
+  useEffect(() => {
+    async function loadData() {
+      const url = SERVERIP + '/boardlist/list';
+      await axios
+        .get(url)
+        .then((res) => {
+          setBoardList(res.data);
+          setLoading(false);
+          setSessionName(loginUserName);
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    loadData();
+  }, []);
+
+  return (
+    <div className='container mt-3'>
+      <div className='container' style={{marginTop: '80px'}}>
+        <h2>게시판 목록</h2>
+        <p>
+          <b>{sessionName}</b>님 안녕하세요?
+        </p>
+        <div className='input-group mb-3' style={{marginTop: '20px'}}>
+          <button
+            type='button'
+            className='btn btn-warning dropdown-toggle bg-warning'
+            data-bs-toggle='dropdown'
+          >
+            선택하세요
+          </button>
+          <ul className='dropdown-menu '>
+            <li>
+              <a className='dropdown-item' href='#'>
+                제목
+              </a>
+            </li>
+            <li>
+              <a className='dropdown-item' href='#'>
+                내용
+              </a>
+            </li>
+            <li>
+              <a className='dropdown-item' href='#'>
+                제목+내용
+              </a>
+            </li>
+          </ul>
+          <input type='text' className='form-control' placeholder='Search' />
+          <button className='btn btn-secondary' type='submit'>
+            Go
+          </button>
+        </div>
+        <table className='table table-hover ' style={{textAlign: 'center'}}>
+          <thead className='table-secondary'>
+            <tr>
+              <th>번호</th>
+              <th>제목</th>
+              <th>작성자</th>
+              <th>조회수</th>
+              <th>작성일</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <b>Loading</b>
+            ) : (
+              boardList
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage
+                )
+                .map((item, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td>
+                        <a href={`/board/view/${item.id}`}>{item.title}</a>
+                      </td>
+                      <td>{item.username}</td>
+                      <td>{item.hit}</td>
+                      <td>{item.wdate}</td>
+                    </tr>
+                  );
+                })
+            )}
+          </tbody>
+        </table>
+
+        <ul className='pagination justify-content-center'>
+          <li className='page-item'>
+            <a className='page-link' href='#'>
+              first
+            </a>
+          </li>
+          <li className='page-item'>
+            <a className='page-link' href='#'>
+              Previous
+            </a>
+          </li>
+          {Array.from(
+            {length: Math.ceil(boardList.length / itemsPerPage)},
+            (_, index) => {
+              const pageNumber = index + 1;
+              const isActive = pageNumber === Number(currentPage);
+              const className = isActive ? 'page-link active' : 'page-link';
+              return (
+                <li key={index} className='page-item'>
+                  <a className={className} href={`/board/list/${pageNumber}`}>
+                    {pageNumber}
+                  </a>
+                </li>
+              );
+            }
+          )}
+
+          <li className='page-item'>
+            <a className='page-link' href='#'>
+              Next
+            </a>
+          </li>
+          <li className='page-item'>
+            <a className='page-link' href='#'>
+              last
+            </a>
+          </li>
+        </ul>
+        <div
+          className='container mt-3'
+          style={{display: 'flex', justifyContent: 'right'}}
+        >
+          <button onClick={onClickWrite} className='btn btn-warning'>
+            글쓰기
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default BoardListPage;
+
+node.js 파일
+
+
+router.get('/list/:page', async function (req, res, next) {
+  //구글 보고 만든거
+  let page = req.params.page;
+  let sql = `
+SELECT a.id,a.user_id,a.title,a.hit,a.contents,date_format(a.wdate, '%Y-%m-%d') wdate, b.username
+from board a
+LEFT JOIN  member b ON A.user_id=b.user_id
+ORDER BY ID DESC
+ `;
+
+  results = await commonDB.mysqlRead(sql, function (err, rows) {
+    if (err) console.error('err : ' + err);
+    res.json(results);
+  
+    });
+  });
+});
